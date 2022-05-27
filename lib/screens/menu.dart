@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shazaflutter/screens/drawer.dart';
+import 'package:shazaflutter/screens/login.dart';
+import 'package:shazaflutter/shared/navigator.dart';
+
 ////////////////////////////3333
 class Menu extends StatefulWidget {
   @override
@@ -7,20 +11,37 @@ class Menu extends StatefulWidget {
 }
 
 class _MenuState extends State<Menu> {
-
-    var scaffoldKey = GlobalKey<ScaffoldState>();
+  var scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      appBar: AppBar(title: Text('The Mall')
-      
-        ),
-      body: const Center(
-        child: Text('Home Screen!'),
+      appBar: AppBar(
+        title: Text('The Mall'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              navigateReplacement(context: context, route: Login());
+            },
+          ),
+        ],
       ),
-      drawer:MyDrawer() ,
+      body:  Stack(
+      children: <Widget>[
+        new Container(
+          decoration: new BoxDecoration(
+            image: new DecorationImage(image: new AssetImage("assets/park.jpg"), fit: BoxFit.cover,),
+          ),
+        ),
+        new Center(
+          child: new Text("Hello Parking"),
+        )
+      ],
+    ),
+      drawer: MyDrawer(),
       // drawer: Drawer(
       //   child: ListView(
       //     padding: EdgeInsets.zero,

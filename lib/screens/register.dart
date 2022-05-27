@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:shazaflutter/model/user.dart';
 import 'package:shazaflutter/screens/menu.dart';
 import 'package:shazaflutter/shared/navigator.dart';
+
 //////////////////2222------
 class Register extends StatefulWidget {
   @override
@@ -8,17 +12,22 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  final emailController = TextEditingController(),
+      passCOntroller = TextEditingController(),
+      name = TextEditingController(),
+      phone = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         //resizeToAvoidBottomPadding: false,
         appBar: AppBar(),
         body: SingleChildScrollView(
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
-              Widget>[
-                SizedBox(
-                  height: 50,
-                ),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: <
+                  Widget>[
+            SizedBox(
+              height: 50,
+            ),
             Container(
               child: Stack(
                 children: <Widget>[
@@ -27,21 +36,18 @@ class _RegisterState extends State<Register> {
                     width: MediaQuery.of(context).size.width * 0.8,
                     margin: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.09),
-
                     child: Image.asset("assets/unnamed.png"),
-
-
                   ),
                   Center(
                     child: Container(
                       padding: EdgeInsets.fromLTRB(5.0, 100.0, 0.0, 0.0),
                       child: Text(
                         'Park Me ',
-                        style:
-                        TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.bold,
-                          fontSize: 25,),
+                          fontSize: 25,
+                        ),
                       ),
                     ),
                   ),
@@ -49,8 +55,8 @@ class _RegisterState extends State<Register> {
                     padding: EdgeInsets.fromLTRB(15.0, 150.0, 0.0, 0.0),
                     child: Text(
                       'Signup',
-                      style:
-                      TextStyle(fontSize:50.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 50.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Container(
@@ -63,7 +69,6 @@ class _RegisterState extends State<Register> {
                           color: Colors.green),
                     ),
                   ),
-
                 ],
               ),
             ),
@@ -72,6 +77,8 @@ class _RegisterState extends State<Register> {
                 child: Column(
                   children: <Widget>[
                     TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
                           labelText: 'EMAIL',
                           labelStyle: TextStyle(
@@ -85,6 +92,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 10.0),
                     TextField(
+                      controller: passCOntroller,
                       decoration: InputDecoration(
                           labelText: 'PASSWORD ',
                           labelStyle: TextStyle(
@@ -97,8 +105,9 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 10.0),
                     TextField(
+                      controller: name,
                       decoration: InputDecoration(
-                          labelText: 'NICK NAME ',
+                          labelText: 'NAME ',
                           labelStyle: TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.bold,
@@ -108,6 +117,7 @@ class _RegisterState extends State<Register> {
                     ),
                     SizedBox(height: 10.0),
                     TextField(
+                      controller: phone,
                       decoration: InputDecoration(
                           labelText: 'Phone Number',
                           labelStyle: TextStyle(
@@ -119,18 +129,43 @@ class _RegisterState extends State<Register> {
                       keyboardType: TextInputType.phone,
                     ),
                     SizedBox(height: 20.0),
-                    Container(
-                        height: 40.0,
-                        child: Material(
-                          borderRadius: BorderRadius.circular(20.0),
-                          shadowColor: Colors.greenAccent,
-                          color: Colors.green,
-                          elevation: 7.0,
-                          child: GestureDetector(
-                            onTap: () {
-navigate(context: context, route: Menu());
+                    GestureDetector(
+                      onTap: () async {
+                        final user= UserModel(
+                          email: emailController.text,
+                          name: name.text,
+                          phone: phone.text,
 
-                            },
+                        );
+                        try {
+                          final credential = await FirebaseAuth.instance
+                              .createUserWithEmailAndPassword(
+                            email: emailController.text.trim(),
+                            password: passCOntroller.text.trim(),
+                          );
+
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(credential.user!.uid)
+                              .set(user.toMap());
+                          navigateReplacement(context: context, route: Menu());
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'weak-password') {
+                            print('The password provided is too weak.');
+                          } else if (e.code == 'email-already-in-use') {
+                            print('The account already exists for that email.');
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: Container(
+                          height: 40.0,
+                          child: Material(
+                            borderRadius: BorderRadius.circular(20.0),
+                            shadowColor: Colors.greenAccent,
+                            color: Colors.green,
+                            elevation: 7.0,
                             child: Center(
                               child: Text(
                                 'SIGNUP',
@@ -140,8 +175,8 @@ navigate(context: context, route: Menu());
                                     fontFamily: 'Montserrat'),
                               ),
                             ),
-                          ),
-                        )),
+                          )),
+                    ),
                     SizedBox(height: 20.0),
                     Container(
                       height: 40.0,
@@ -158,22 +193,17 @@ navigate(context: context, route: Menu());
                           onTap: () {
                             Navigator.of(context).pop();
                           },
-                          child:
-
-                          Center(
+                          child: Center(
                             child: Text('Go Back',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Montserrat')),
                           ),
-
-
                         ),
                       ),
                     ),
                   ],
                 )),
-            
           ]),
         ));
   }

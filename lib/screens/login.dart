@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shazaflutter/screens/menu.dart';
 import 'package:shazaflutter/screens/register.dart';
@@ -11,6 +12,8 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final emailController = TextEditingController(),
+      passCOntroller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,8 +57,10 @@ class _LoginState extends State<Login> {
                 child: Column(
                   children: <Widget>[
                     TextField(
+                      controller: emailController,
+                      keyboardType: TextInputType.emailAddress,
                       decoration: InputDecoration(
-                          labelText: 'Phone Number',
+                          labelText: 'Email',
                           labelStyle: TextStyle(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.bold,
@@ -64,6 +69,18 @@ class _LoginState extends State<Login> {
                               borderSide: BorderSide(color: Colors.green))),
                     ),
                     SizedBox(height: 20.0),
+                    TextField(
+                      controller: passCOntroller,
+                      keyboardType: TextInputType.visiblePassword,
+                      decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey),
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: Colors.green))),
+                    ),
                     SizedBox(height: 5.0),
                     Container(
                       alignment: Alignment(1.0, 0.0),
@@ -74,15 +91,33 @@ class _LoginState extends State<Login> {
                     Container(
                       height: 60.0,
                       width: 250,
-                      child: Material(
-                        borderRadius: BorderRadius.circular(20.0),
-                        shadowColor: Colors.greenAccent,
-                        color: Colors.green,
-                        elevation: 7.0,
-                        child: GestureDetector(
-                          onTap: () {
-                            navigate(context: context, route: Menu());
-                          },
+                      child: GestureDetector(
+                        onTap: () async {
+                          try {
+                            final credential = await FirebaseAuth.instance
+                                .createUserWithEmailAndPassword(
+                              email: emailController.text.trim(),
+                              password: passCOntroller.text.trim(),
+                            );
+
+                            navigateReplacement(
+                                context: context, route: Menu());
+                          } on FirebaseAuthException catch (e) {
+                            if (e.code == 'weak-password') {
+                              print('The password provided is too weak.');
+                            } else if (e.code == 'email-already-in-use') {
+                              print(
+                                  'The account already exists for that email.');
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
+                        },
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20.0),
+                          shadowColor: Colors.greenAccent,
+                          color: Colors.green,
+                          elevation: 7.0,
                           child: Center(
                             child: Text(
                               'LOGIN',
@@ -112,7 +147,7 @@ class _LoginState extends State<Login> {
                 ),
                 SizedBox(width: 5.0),
                 InkWell(
-                  onTap: () {
+                  onTap: () async {
                     navigate(context: context, route: Register());
                   },
                   child: Text(

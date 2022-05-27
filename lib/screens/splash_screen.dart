@@ -1,5 +1,10 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shazaflutter/screens/login.dart';
+import 'package:shazaflutter/screens/menu.dart';
+import 'package:shazaflutter/shared/navigator.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -11,15 +16,29 @@ class _SplashScreenState extends State<SplashScreen> {
     void initState() {
     // TODO: implement initState
 
-    Future.delayed(Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-          context,
-          PageRouteBuilder(
-              transitionDuration: Duration(seconds: 1),
-              pageBuilder: (_, __, ___) => Login()
-             // DrawerScreen()
-              ));
+ Timer(const Duration(seconds: 2), () {
+      FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+        if (user == null) {
+          navigateReplacement(context: context, route:  Login());
+        } else {
+          // Navigator.pushReplacementNamed(context, FirstScreen.id);
+
+                    navigateReplacement(context: context, route:  Menu());
+
+
+          //  print('User is signed in!');
+        }
+      });
     });
+    // Future.delayed(Duration(seconds: 5), () {
+    //   Navigator.pushReplacement(
+    //       context,
+    //       PageRouteBuilder(
+    //           transitionDuration: Duration(seconds: 1),
+    //           pageBuilder: (_, __, ___) => Login()
+    //          // DrawerScreen()
+    //           ));
+    // });
     super.initState();
   }
 
