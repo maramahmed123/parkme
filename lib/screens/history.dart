@@ -74,6 +74,15 @@ class History extends StatelessWidget {
                             ),
                             Row(
                               children: [
+                                Text('RFID: '),
+                                Text(myData[index].rfId.toString()),
+                              ],
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            Row(
+                              children: [
                                 Text('Start Time: '),
                                 Text(myData[index]
                                     .startTime!

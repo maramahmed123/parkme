@@ -135,7 +135,8 @@ class _MyStatefulWidgetState extends State<PaymentScreen> {
                     time: Timestamp.fromDate(DateTime.now()),
                     status: true,
                     id: '',
-                    name: '');
+                    name: '',
+                    rfId: ' ');
 
                 FirebaseFirestore.instance
                     .collection('users')
@@ -149,6 +150,7 @@ class _MyStatefulWidgetState extends State<PaymentScreen> {
                   "price": valueController.text,
                   "setName": widget.myModel.setName,
                   "setPrice": '${widget.myModel.price} in Hour',
+                  "rfId": '${widget.myModel.rfId}',
                 });
 
                 FirebaseFirestore.instance

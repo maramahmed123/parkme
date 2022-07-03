@@ -29,18 +29,21 @@ class _MenuState extends State<Menu> {
           ),
         ],
       ),
-      body:  Stack(
-      children: <Widget>[
-        new Container(
-          decoration: new BoxDecoration(
-            image: new DecorationImage(image: new AssetImage("assets/park.jpg"), fit: BoxFit.cover,),
+      body: Stack(
+        children: <Widget>[
+          new Container(
+            decoration: new BoxDecoration(
+              image: new DecorationImage(
+                image: new AssetImage("assets/park.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
           ),
-        ),
-        new Center(
-          child: new Text("Hello Parking"),
-        )
-      ],
-    ),
+          new Center(
+            child: new Text("Hello Parking"),
+          )
+        ],
+      ),
       drawer: MyDrawer(),
       // drawer: Drawer(
       //   child: ListView(

@@ -4,6 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HistoryModel {
   Timestamp? startTime;
+  String? rfId;
+
   String? time;
   Timestamp? endTime;
   String? price;
@@ -11,6 +13,7 @@ class HistoryModel {
   String? setPrice;
   HistoryModel({
     this.startTime,
+    this.rfId,
     this.time,
     this.endTime,
     this.price,
@@ -21,6 +24,7 @@ class HistoryModel {
   Map<String, dynamic> toMap() {
     return {
       'startTime': startTime,
+      'rfId': rfId,
       'time': time,
       'endTime': endTime,
       'price': price,
@@ -32,6 +36,7 @@ class HistoryModel {
   factory HistoryModel.fromMap(Map<String, dynamic> map) {
     return HistoryModel(
       startTime: map['startTime'],
+      rfId: map['rfId'],
       time: map['time'],
       endTime: map['endTime'],
       price: map['price'],

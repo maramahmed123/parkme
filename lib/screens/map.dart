@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -406,15 +408,18 @@ class _RegisterSetState extends State<RegisterSet> {
             child: const Text('Save'),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
+                Random random = Random();
+                int x = random.nextInt(5000);
+                int y = random.nextInt(5000);
                 MapModel mapModel = MapModel(
-                  time: Timestamp.fromDate(DateTime(time.year, time.month,
-                      time.day, selectedTime.hour, selectedTime.minute)),
-                  status: false,
-                  name: name.text,
-                  setName: widget.myModel.setName,
-                  price: 10,
-                  id: FirebaseAuth.instance.currentUser!.uid,
-                );
+                    time: Timestamp.fromDate(DateTime(time.year, time.month,
+                        time.day, selectedTime.hour, selectedTime.minute)),
+                    status: false,
+                    name: name.text,
+                    setName: widget.myModel.setName,
+                    price: 10,
+                    id: FirebaseAuth.instance.currentUser!.uid,
+                    rfId: '${x}B${y}');
                 await FirebaseFirestore.instance
                     .collection('map')
                     .doc(widget.myModel.setName.toString())
